@@ -1,3 +1,4 @@
+dist/*.egg
 .watchmanconfig
 build
 yacs.egg-info
