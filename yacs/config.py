@@ -241,7 +241,11 @@ class CfgNode(dict):
                 d = d[subkey]
             subkey = key_list[-1]
             _assert_with_logging(subkey in d, "Non-existent key: {}".format(full_key))
-            value = self._decode_cfg_value(v)
+            if isinstance(d[subkey], str):
+                # Avoid string 'None' and '1234' decode to NoneType and int
+                value = v
+            else:
+                value = self._decode_cfg_value(v)
             value = _check_and_coerce_cfg_value_type(value, d[subkey], subkey, full_key)
             d[subkey] = value
 
@@ -457,6 +461,9 @@ def _merge_a_into_b(a, b, root, key_list):
         v = b._decode_cfg_value(v)
 
         if k in b:
+            # Avoid string 'None' and '1234' decode to NoneType and int
+            if isinstance(b[k], str):
+                v = v_
             v = _check_and_coerce_cfg_value_type(v, b[k], k, full_key)
             # Recursively merge dicts
             if isinstance(v, CfgNode):
